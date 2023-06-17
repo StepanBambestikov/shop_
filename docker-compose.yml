@@ -1,0 +1,200 @@
+version: "3.7"
+
+services:
+  keycloak:
+    image: "quay.io/keycloak/keycloak:20.0.3"
+    restart: unless-stopped
+    environment:
+      DB_VENDOR: "POSTGRES"
+      DB_ADDR: "keycloakdb"
+      DB_DATABASE: "keycloak"
+      DB_USER: "keycloak"
+      DB_SCHEMA: "public"
+      DB_PASSWORD: "P455w0rd"
+      KEYCLOAK_USER: "admin"
+      KEYCLOAK_PASSWORD: "admin"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 18080:8080
+    command:
+      - start-dev --import-realm
+    volumes:
+      - ./authService/deploy/docker/keycloak:/opt/keycloak/data/import
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1G"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      keycloak_db:
+        condition: service_healthy
+    networks:
+      - gigatest
+  rabbitmq:
+    build:
+      context: catalogService/deploy/docker/rabbit/rabbit
+    restart: unless-stopped
+    ports:
+      - 25672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - gigatest
+  keycloak_db:
+    image: "postgres:15.2-alpine"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "keycloakdb"
+      POSTGRES_USER: "keycloak"
+      POSTGRES_PASSWORD: "P455w0rd"
+    volumes:
+      - 'pg:/var/lib/postgresql/data'
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1G"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak -d keycloakdb" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - gigatest
+  catalog_db:
+    image: "postgres:15.2-alpine"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres2"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Qqqwwweee12321"
+    ports:
+      - "5433:5432"
+    networks:
+      - gigatest
+    volumes:
+      - 'pg:/var/lib/postgresql/data'
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1G"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+  order_db:
+    image: "postgres:15.2-alpine"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Qqqwwweee12321"
+    volumes:
+      - 'pg:/var/lib/postgresql/data'
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1G"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - gigatest
+  authsvc:
+    build:
+      context: .
+      dockerfile: "authService/deploy/docker/Dockerfile"
+    restart: unless-stopped
+    ports:
+      - 8082:8082
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1G"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - gigatest
+  catalog_gateway:
+    build:
+      context: .
+      dockerfile: catalogService/deploy/docker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8082:8082
+    command: [ "/gateapp", "start" ]
+    depends_on:
+      - rabbitmq
+      - catalog_db
+    networks:
+      - gigatest
+  catalog_core:
+    build:
+      context: .
+      dockerfile: catalogService/deploy/docker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8083:8083
+    command: [ "catalogService/coreapp", "start" ]
+    depends_on:
+      - rabbitmq
+      - catalog_db
+    networks:
+      - gigatest
+  order_gateway:
+    build:
+      context: .
+      dockerfile: orderService/deploy/docker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8082:8082
+    command: [ "orderService/gateapp", "start" ]
+    depends_on:
+      - rabbitmq
+      - order_db
+    networks:
+      - gigatest
+  order_core:
+    build:
+      context: .
+      dockerfile: orderService/deploy/docker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8083:8083
+    command: [ "orderService/coreapp", "start" ]
+    depends_on:
+      - rabbitmq
+      - order_db
+    networks:
+      - gigatest
+
+volumes:
+  pg:
+
+networks:
+  gigatest:

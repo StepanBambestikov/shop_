@@ -1,0 +1,30 @@
+server:
+  host: 0.0.0.0
+  port: 8082
+
+swagger:
+  enabled: true
+  endpoint: /swagger
+
+metrics:
+  enabled: true
+  endpoint: /metrics
+  export_default: true
+
+health:
+  enabled: true
+  endpoint: /healthz
+
+integrations:
+  keycloak:
+    # uri: http://keycloak:8080
+    uri: http://127.0.0.1:18080
+    client:
+      id: test-auth
+      secret: P8YMsX6dw7UKvkwNZDJMday4yaZKelqh
+    admin:
+      username: admin
+      password: admin
+      realm: master
+    token_refresh_interval: 30
+    realm: test

@@ -1,0 +1,403 @@
+definitions:
+  ErrorMessage:
+    properties:
+      message:
+        type: string
+    type: object
+  Response:
+    properties:
+      data: {}
+      error:
+        $ref: '#/definitions/ErrorMessage'
+      message:
+        type: string
+    type: object
+  api.GiveRoleRequest:
+    properties:
+      role:
+        type: string
+    required:
+    - role
+    type: object
+  api.LoginRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  api.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  api.LogoutRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
+  api.SignupRequest:
+    properties:
+      email:
+        maxLength: 80
+        type: string
+      first_name:
+        maxLength: 60
+        type: string
+      last_name:
+        maxLength: 60
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        maxLength: 60
+        minLength: 4
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  entities.Error:
+    properties:
+      message:
+        example: Unknown error
+        type: string
+    type: object
+  entities.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      market_role:
+        $ref: '#/definitions/entities.UserRole'
+      username:
+        type: string
+      verified:
+        type: boolean
+    required:
+    - email
+    - market_role
+    - username
+    - verified
+    type: object
+  entities.UserRole:
+    enum:
+    - notverified
+    type: string
+    x-enum-varnames:
+    - UserRoleNotverified
+info:
+  contact: {}
+paths:
+  /api/v1/sign/in:
+    post:
+      consumes:
+      - application/json
+      description: Logins user
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Logins user
+      tags:
+      - Sign
+  /api/v1/sign/out:
+    post:
+      consumes:
+      - application/json
+      description: Logouts user
+      parameters:
+      - description: Used to pass refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Logouts user
+      tags:
+      - Sign
+  /api/v1/sign/up:
+    post:
+      consumes:
+      - application/json
+      description: Signs up user
+      parameters:
+      - description: User sign up request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.SignupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "409":
+          description: Conflict
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Signs up user
+      tags:
+      - Sign
+  /api/v1/users/me:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes user
+      parameters:
+      - description: Used to pass access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Deletes user
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Returns information about user
+      parameters:
+      - description: Used to pass access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/entities.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Returns user info
+      tags:
+      - User
+  /internal/api/v1/users/{userId}:
+    delete:
+      description: Deletes user by id
+      parameters:
+      - description: User Id
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Deletes user by id
+      tags:
+      - User
+  /internal/api/v1/users/{userId}/giveRole:
+    post:
+      consumes:
+      - application/json
+      description: 'Gives user one of theese roles: notverified, verified, seller'
+      parameters:
+      - description: User Id
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.GiveRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Deletes user by id
+      tags:
+      - User
+swagger: "2.0"

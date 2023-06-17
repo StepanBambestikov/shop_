@@ -1,0 +1,206 @@
+definitions:
+  DTO.OrderDTO:
+    properties:
+      active:
+        type: boolean
+      category:
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      salesMan:
+        type: string
+      status:
+        type: string
+      userId:
+        type: string
+    type: object
+  ErrorMessage:
+    properties:
+      message:
+        type: string
+    type: object
+  Response:
+    properties:
+      data: {}
+      error:
+        $ref: '#/definitions/ErrorMessage'
+      message:
+        type: string
+    type: object
+  api.CreateOrderRequest:
+    properties:
+      orderDTO:
+        $ref: '#/definitions/DTO.OrderDTO'
+    type: object
+  entities.Error:
+    properties:
+      message:
+        example: Unknown error
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/orders:
+    post:
+      consumes:
+      - application/json
+      description: Creates new order
+      parameters:
+      - description: Create order request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Creates new order
+      tags:
+      - Order
+  /internal/orders/setStatus/{id}:
+    post:
+      description: Set order status
+      parameters:
+      - description: label
+        in: path
+        name: label
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Set order status
+      tags:
+      - Order
+  /orders:
+    get:
+      description: GetUserOrders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: GetUserOrders
+      tags:
+      - Order
+  /orders/{id}:
+    get:
+      description: get order info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: get order info
+      tags:
+      - Order
+    post:
+      consumes:
+      - application/json
+      description: Deletes order
+      parameters:
+      - description: Create order request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Deletes order
+      tags:
+      - Product
+swagger: "2.0"
