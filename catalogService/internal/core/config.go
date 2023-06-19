@@ -28,7 +28,10 @@ type RabbitConfig struct {
 }
 
 type PostgresConfig struct {
-	Initialize string
+	Address  string
+	User     string
+	DBName   string
+	Password string
 }
 
 type IntegrationsConfig struct {

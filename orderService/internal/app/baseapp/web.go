@@ -1,14 +1,14 @@
 package baseapp
 
 import (
-	"catalogServiceGit/internal/core"
-	"catalogServiceGit/internal/core/entities"
-	"catalogServiceGit/internal/log"
-	"catalogServiceGit/internal/metrics"
-	"catalogServiceGit/internal/middleware"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"orderServiceGit/internal/core"
+	"orderServiceGit/internal/core/entities"
+	"orderServiceGit/internal/log"
+	"orderServiceGit/internal/metrics"
+	"orderServiceGit/internal/middleware"
 	"os"
 	"os/signal"
 	"syscall"

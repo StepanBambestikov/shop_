@@ -27,18 +27,19 @@ func bindAndValidateJSON[T any](request *T, ctx *gin.Context) (err error) {
 	return nil
 }
 
-// CreateOrder godoc
-// @Summary Creates new order
-// @Schemes
-// @Description Creates new order
-// @Tags Order
-// @Param request body api.CreateOrderRequest true "Create order request"
-// @Accept json
-// @Produce json
-// @Success 200 {object} entities.ApiReply
-// @Failure 400 {object} entities.ApiReply{error=entities.Error}
-// @Failure 500 {object} entities.ApiReply{error=entities.Error}
-// @Router /api/v1/orders [post]
+//// CreateOrder godoc
+//// @Summary Creates new order
+//// @Schemes
+//// @Description Creates new order
+//// @Tags Order
+//// @Param request body api.CreateOrderRequest true "Create order request"
+//// @Accept json
+//// @Produce json
+//// @Success 200 {object} entities.ApiReply
+//// @Failure 400 {object} entities.ApiReply{error=entities.Error}
+//// @Failure 500 {object} entities.ApiReply{error=entities.Error}
+//// @Router /catalog/v1/orders [post]
+
 func CreateOrderHandler(ctx *gin.Context, svc services.GateService) {
 	var request api.CreateOrderRequest
 	err := bindAndValidateJSON(&request, ctx)
@@ -64,7 +65,7 @@ func CreateOrderHandler(ctx *gin.Context, svc services.GateService) {
 // @Success 200 {object} entities.ApiReply
 // @Failure 400 {object} entities.ApiReply{error=entities.Error}
 // @Failure 500 {object} entities.ApiReply{error=entities.Error}
-// @Router /internal/orders/setStatus/{id} [post]
+// @Router /order/v1/internal/orders/setStatus/{id} [post]
 func SetOrderStatusHandler(ctx *gin.Context, svc services.GateService) {
 	var request api.SetOrderStatusRequest
 	err := bindAndValidateJSON(&request, ctx)
@@ -91,7 +92,7 @@ func SetOrderStatusHandler(ctx *gin.Context, svc services.GateService) {
 // @Success 200 {object} entities.ApiReply
 // @Failure 400 {object} entities.ApiReply{error=entities.Error}
 // @Failure 500 {object} entities.ApiReply{error=entities.Error}
-// @Router /orders/{id} [post]
+// @Router /order/v1/orders/{id} [delete]
 func DeleteOrderHandler(ctx *gin.Context, svc services.GateService) {
 	var request api.DeleteOrderRequest
 	err := bindAndValidateJSON(&request, ctx)
@@ -115,8 +116,8 @@ func DeleteOrderHandler(ctx *gin.Context, svc services.GateService) {
 // @Produce json
 // @Success 200 {object} entities.ApiReply
 // @Failure 500 {object} entities.ApiReply{error=entities.Error}
-// @Router  /orders/{id} [get]
-func GetOrderInfohandler(ctx *gin.Context, svc services.GateService) {
+// @Router  /order/v1/orders/{id} [get]
+func GetOrderInfoHandler(ctx *gin.Context, svc services.GateService) {
 	var request api.GetOrderInfoRequest
 	v := validator.New()
 	if err := ctx.ShouldBindUri(&request); err != nil { //TODO gin.BindSkip
@@ -150,8 +151,8 @@ func GetOrderInfohandler(ctx *gin.Context, svc services.GateService) {
 // @Produce json
 // @Success 200 {object} entities.ApiReply
 // @Failure 500 {object} entities.ApiReply{error=entities.Error}
-// @Router /orders [get]
-func GetSeveralProductsHandler(ctx *gin.Context, svc services.GateService) {
+// @Router /order/v1/orders [get]
+func GetUserOrdersHandler(ctx *gin.Context, svc services.GateService) {
 	var request api.GetUserOrdersRequest
 	v := validator.New()
 	if err := ctx.ShouldBindUri(&request); err != nil { //TODO gin.BindSkip

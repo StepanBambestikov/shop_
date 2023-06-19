@@ -4,7 +4,7 @@ WORKDIR /build
 
 COPY catalogService/Makefile .
 COPY ./catalogService/internal/ /build/internal/
-COPY go.mod .
+COPY ./catalogService/go.mod .
 COPY ./catalogService/docs/ /build/docs/
 COPY ./catalogService/cmd/ /build/cmd/
 
@@ -19,6 +19,6 @@ ENV GIN_MODE=release
 COPY --from=build /build/dist/linux/gateapp .
 COPY --from=build /build/dist/linux/coreapp .
 
-COPY catalogService/config/config.yaml /catalogService/config.yaml
+COPY catalogService/config/config.yaml /config.yaml
 
 CMD ["/gateapp", "start"]

@@ -1,7 +1,6 @@
 package DB_tests
 
 import (
-	"catalogServiceGit/internal/core"
 	"catalogServiceGit/internal/core/selection"
 	"catalogServiceGit/internal/core/services/DTO"
 	catalogService "catalogServiceGit/internal/core/services/impl/catalogsvc"
@@ -14,7 +13,7 @@ var (
 )
 
 func MakeAndPrepareDB(testInfo *DBTestInfo) (DB *catalogService.PostgresCatalogService, err error) {
-	DB, err = catalogService.FOR_TESTING_NewPostgresCatalogClient(&core.PostgresConfig{Initialize: databaseInit})
+	DB, err = catalogService.FOR_TESTING_NewPostgresCatalogClient(databaseInit)
 	for _, product := range testInfo.Products {
 		err = DB.CreateProduct(product)
 		if err != nil {

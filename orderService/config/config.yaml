@@ -28,3 +28,12 @@ integrations:
       realm: master
     token_refresh_interval: 30
     realm: test
+  rabbitmq:
+    dsn: amqp://rabbitmqadmin:rabbitmqadmin@rabbitmq:5672
+    exchange: crud
+    max_retries: 1
+  postgres:
+    address: 0.0.0.0
+    password: Qqqwwweee12321
+    user: postgres
+    dbname: postgres2

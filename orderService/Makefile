@@ -46,7 +46,7 @@ clean:
 doc:
 	$(GOCMD) run github.com/swaggo/swag/cmd/swag@v1.8.12 init --parseDependency --parseInternal --output ./docs/gen -g app.go --dir ./internal/app/gateapp
 download:
-	go mod tidy
+	go mod tidy -go=1.16 && go mod tidy -go=1.20
 	go mod download
 build-all: build-mac build-linux
 all: doc test prebuild-all build-all

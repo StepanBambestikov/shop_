@@ -23,7 +23,7 @@ type GateService interface {
 	// return result
 	GetUserOrders(dto *selection.SelectionDTO) ([]DTO.OrderDTO, error)
 	GetOrderByID(orderDTO DTO.OrderDTO) (DTO.OrderDTO, error)
-
+	CreateOrder(orderDTO DTO.OrderDTO) (err error)
 	SetOrderStatus(orderDTO DTO.OrderDTO) (err error)
 	DeleteOrder(orderDTO DTO.OrderDTO) (err error)
 }

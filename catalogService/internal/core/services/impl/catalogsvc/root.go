@@ -9,8 +9,12 @@ import (
 	"gorm.io/gorm"
 )
 
+//var (
+//	databaseInit = "user=postgres password=Qqqwwweee12321 dbname=postgres sslmode=disable"
+//)
+
 func NewPostgresCatalogClient(cfg *core.PostgresConfig) (services.CatalogService, error) {
-	internalDB, err := gorm.Open(postgres.Open(cfg.Initialize), &gorm.Config{})
+	internalDB, err := gorm.Open(postgres.Open("user="+cfg.User+" password="+cfg.Password+" dbname="+cfg.DBName+" sslmode=disable"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -25,8 +29,8 @@ func NewPostgresCatalogClient(cfg *core.PostgresConfig) (services.CatalogService
 	return dbManager, nil
 }
 
-func FOR_TESTING_NewPostgresCatalogClient(cfg *core.PostgresConfig) (*PostgresCatalogService, error) {
-	internalDB, err := gorm.Open(postgres.Open(cfg.Initialize), &gorm.Config{})
+func FOR_TESTING_NewPostgresCatalogClient(initialize string) (*PostgresCatalogService, error) {
+	internalDB, err := gorm.Open(postgres.Open(initialize), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

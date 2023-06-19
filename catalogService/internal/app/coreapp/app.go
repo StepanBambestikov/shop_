@@ -47,10 +47,6 @@ func (c *coreApp) initConsumers() error {
 	if err != nil {
 		return err
 	}
-	err = c.eventApp.AddHandler("OrderProduct", core.TopicOrderProduct, util.WrapEvent(c.coreService.OrderProduct), false)
-	if err != nil {
-		return err
-	}
 	err = c.eventApp.AddHandler("RateProduct", core.TopicRateProduct, util.WrapEvent(c.coreService.RateProduct), false)
 	if err != nil {
 		return err

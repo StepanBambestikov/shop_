@@ -10,6 +10,7 @@ import (
 	"catalogServiceGit/internal/core"
 	"catalogServiceGit/internal/core/services"
 	"catalogServiceGit/internal/core/services/impl/apisvc"
+	catalogsvc "catalogServiceGit/internal/core/services/impl/catalogsvc"
 	"catalogServiceGit/internal/integrations"
 	"catalogServiceGit/internal/integrations/rabbitmq"
 
@@ -79,7 +80,7 @@ func (a *gateApp) AddUnprotectedRoutes() {
 		"/api/v1/products/{id}/rate",
 		a.RateProductHandler)
 	a.AddRoute(
-		http.MethodPost,
+		http.MethodDelete,
 		"/api/v1/products/{id}",
 		a.DeleteProductHandler)
 	a.AddRoute(
@@ -106,11 +107,11 @@ func (a *gateApp) DeleteProductHandler(ctx *gin.Context) {
 }
 
 func (a *gateApp) OrderProductHandler(ctx *gin.Context) {
-	handlers.DeleteProductHandler(ctx, a.apiService)
+	handlers.OrderProductHandler(ctx, a.apiService)
 }
 
 func (a *gateApp) RateProductHandler(ctx *gin.Context) {
-	handlers.DeleteProductHandler(ctx, a.apiService)
+	handlers.RateProductHandler(ctx, a.apiService)
 }
 
 func (a *gateApp) GetSeveralProductsHandler(ctx *gin.Context) {

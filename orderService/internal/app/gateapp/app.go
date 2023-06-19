@@ -5,15 +5,16 @@ import (
 	"log"
 	"net/http"
 
-	"catalogServiceGit/internal/app/baseapp"
-	"catalogServiceGit/internal/app/gateapp/handlers"
-	"catalogServiceGit/internal/core"
-	"catalogServiceGit/internal/core/services"
-	"catalogServiceGit/internal/core/services/impl/apisvc"
-	"catalogServiceGit/internal/integrations"
-	"catalogServiceGit/internal/integrations/rabbitmq"
+	"orderServiceGit/internal/app/baseapp"
+	"orderServiceGit/internal/app/gateapp/handlers"
+	"orderServiceGit/internal/core"
+	"orderServiceGit/internal/core/services"
+	"orderServiceGit/internal/core/services/impl/apisvc"
+	ordersvc "orderServiceGit/internal/core/services/impl/ordersvc"
+	"orderServiceGit/internal/integrations"
+	"orderServiceGit/internal/integrations/rabbitmq"
 
-	"catalogServiceGit/docs/gen"
+	"orderServiceGit/docs/gen"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -44,7 +45,7 @@ func NewGateApp(config *core.Config) (baseapp.IApp, error) {
 	if err != nil {
 		log.Fatal("Cannot initialize rabbit: ", err)
 	}
-	catalog, err := catalogsvc.NewPostgresCatalogClient(&config.Integrations.Postgres)
+	catalog, err := ordersvc.NewPostgresOrderClient(&config.Integrations.Postgres)
 	if err != nil {
 		log.Fatal("Cannot ping redis: ", err)
 	}
@@ -64,28 +65,24 @@ func (a *gateApp) AddUnprotectedRoutes() {
 	}
 	a.AddRoute(
 		http.MethodPost,
-		"/api/v1/products",
-		a.CreateProductHandler)
+		"/internal/orders/setStatus/{id}",
+		a.SetOrderStatusHandler)
 	a.AddRoute(
-		http.MethodPost,
-		"/api/v1/products/{id}",
-		a.ChangeProductHandler)
-	a.AddRoute(
-		http.MethodPost,
-		"/api/v1/products/{id}/order",
-		a.OrderProductHandler)
-	a.AddRoute(
-		http.MethodPost,
-		"/api/v1/products/{id}/rate",
-		a.RateProductHandler)
-	a.AddRoute(
-		http.MethodPost,
-		"/api/v1/products/{id}",
-		a.DeleteProductHandler)
+		http.MethodDelete,
+		"/orders/{id}",
+		a.DeleteOrderHandler)
 	a.AddRoute(
 		http.MethodGet,
-		"/api/v1/products",
-		a.GetSeveralProductsHandler)
+		"/orders/{id}",
+		a.GetOrderInfoHandler)
+	a.AddRoute(
+		http.MethodGet,
+		"/orders",
+		a.GetUserOrdersHandler)
+	a.AddRoute(
+		http.MethodPost,
+		"/orders/{id}",
+		a.CreateOrderHandler)
 }
 
 func (a *gateApp) AddSwaggerHandler() {
@@ -93,26 +90,22 @@ func (a *gateApp) AddSwaggerHandler() {
 	a.AddRoute(http.MethodGet, fmt.Sprintf("%s/*any", a.config.Swagger.Endpoint), ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 
-func (a *gateApp) CreateProductHandler(ctx *gin.Context) {
-	handlers.CreateProductHandler(ctx, a.apiService)
+func (a *gateApp) DeleteOrderHandler(ctx *gin.Context) {
+	handlers.DeleteOrderHandler(ctx, a.apiService)
 }
 
-func (a *gateApp) ChangeProductHandler(ctx *gin.Context) {
-	handlers.ChangeProductHandler(ctx, a.apiService)
+func (a *gateApp) GetOrderInfoHandler(ctx *gin.Context) {
+	handlers.GetOrderInfoHandler(ctx, a.apiService)
 }
 
-func (a *gateApp) DeleteProductHandler(ctx *gin.Context) {
-	handlers.DeleteProductHandler(ctx, a.apiService)
+func (a *gateApp) GetUserOrdersHandler(ctx *gin.Context) {
+	handlers.GetUserOrdersHandler(ctx, a.apiService)
 }
 
-func (a *gateApp) OrderProductHandler(ctx *gin.Context) {
-	handlers.DeleteProductHandler(ctx, a.apiService)
+func (a *gateApp) SetOrderStatusHandler(ctx *gin.Context) {
+	handlers.SetOrderStatusHandler(ctx, a.apiService)
 }
 
-func (a *gateApp) RateProductHandler(ctx *gin.Context) {
-	handlers.DeleteProductHandler(ctx, a.apiService)
-}
-
-func (a *gateApp) GetSeveralProductsHandler(ctx *gin.Context) {
-	handlers.GetSeveralProductsHandler(ctx, a.apiService)
+func (a *gateApp) CreateOrderHandler(ctx *gin.Context) {
+	handlers.CreateOrderHandler(ctx, a.apiService)
 }

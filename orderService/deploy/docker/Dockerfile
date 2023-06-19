@@ -2,11 +2,12 @@ FROM golang:1.20 as build
 
 WORKDIR /build
 
-COPY orderService/Makefile .
+COPY ./orderService/Makefile .
 COPY ./orderService/internal/ /build/internal/
-COPY go.mod .
+COPY ./orderService/go.mod .
 COPY ./orderService/docs/ /build/docs/
 COPY ./orderService/cmd/ /build/cmd/
+
 
 RUN make download prebuild build-linux
 
@@ -16,8 +17,9 @@ WORKDIR /
 
 ENV GIN_MODE=release
 
-COPY --from=build /build/dist/linux/authsvc .
+COPY --from=build /build/dist/linux/gateapp .
+COPY --from=build /build/dist/linux/coreapp .
 
-COPY orderService/config/config.yaml orderService/config.yaml
+COPY orderService/config/config.yaml config.yaml
 
-CMD ["/authsvc", "start"]
+CMD ["/gateapp", "start"]
