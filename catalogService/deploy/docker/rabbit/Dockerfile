@@ -1,24 +1,15 @@
-FROM golang:1.20 as build
+FROM rabbitmq:3.11.2-management
 
-WORKDIR /build
+RUN apt-get update && \
+  apt-get install -y curl && \
+  rm -rf /var/lib/apt/lists/*
 
-COPY Makefile .
-COPY ./internal/ /build/internal/
-COPY go.mod .
-COPY ./docs/ /build/docs/
-COPY ./cmd/ /build/cmd/
+RUN curl -L https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/3.11.1/rabbitmq_delayed_message_exchange-3.11.1.ez > $RABBITMQ_HOME/plugins/rabbitmq_delayed_message_exchange-3.11.1.ez
 
-RUN make download prebuild build-linux
+RUN rabbitmq-plugins enable --offline rabbitmq_delayed_message_exchange
 
-FROM alpine:3.17
+COPY rabbitmq.config /etc/rabbitmq/
+COPY definitions.json /etc/rabbitmq/
 
-WORKDIR /
-
-ENV GIN_MODE=release
-
-COPY --from=build /build/dist/linux/gateapp .
-COPY --from=build /build/dist/linux/coreapp .
-
-COPY config/config.yaml /config.yaml
-
-CMD ["/gateapp", "start"]
+EXPOSE 5672
+EXPOSE 15672

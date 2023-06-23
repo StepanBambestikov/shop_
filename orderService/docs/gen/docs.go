@@ -16,77 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/orders": {
-            "post": {
-                "description": "Creates new order",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Order"
-                ],
-                "summary": "Creates new order",
-                "parameters": [
-                    {
-                        "description": "Create order request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.CreateOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/entities.Error"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/entities.Error"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/internal/orders/setStatus/{id}": {
+        "/order/v1/internal/orders/setStatus/{id}": {
             "post": {
                 "description": "Set order status",
                 "produces": [
@@ -151,7 +81,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/orders": {
+        "/order/v1/orders": {
             "get": {
                 "description": "GetUserOrders",
                 "produces": [
@@ -189,7 +119,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/orders/{id}": {
+        "/order/v1/orders/{id}": {
             "get": {
                 "description": "get order info",
                 "produces": [
@@ -226,7 +156,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "delete": {
                 "description": "Deletes order",
                 "consumes": [
                     "application/json"

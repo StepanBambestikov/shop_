@@ -32,6 +32,7 @@ func bindAndValidateJSON[T any](request *T, ctx *gin.Context) (err error) {
 // @Schemes
 // @Description Creates new product
 // @Tags Product
+// @Param Authorization header string true "Used to pass access token"
 // @Param request body api.CreateProductRequest true "Create product request"
 // @Accept json
 // @Produce json
@@ -44,10 +45,11 @@ func CreateProductHandler(ctx *gin.Context, svc services.GateService) {
 	err := bindAndValidateJSON(&request, ctx)
 	err = svc.CreateProduct(request.ProductDTO)
 	if err != nil {
+		log.Error("Internal error: ", err.Error())
 		ctx.Error(entities.NewError(http.StatusInternalServerError, "internal error"))
 		return
 	}
-
+	log.Debug("Successful creating product")
 	ctx.JSON(200, entities.ApiReply{
 		Error:   nil,
 		Message: "OK",
@@ -59,8 +61,8 @@ func CreateProductHandler(ctx *gin.Context, svc services.GateService) {
 // @Schemes
 // @Description Change product information
 // @Tags Product
+// @Param Authorization header string true "Used to pass access token"
 // @Param request body api.ChangeProductRequest true "Create product request"
-// @Param label path string true "label"
 // @Produce json
 // @Success 200 {object} entities.ApiReply
 // @Failure 400 {object} entities.ApiReply{error=entities.Error}
@@ -71,10 +73,11 @@ func ChangeProductHandler(ctx *gin.Context, svc services.GateService) {
 	err := bindAndValidateJSON(&request, ctx)
 	err = svc.ChangeProduct(request.ProductDTO)
 	if err != nil {
+		log.Error("Internal error: ", err.Error())
 		ctx.Error(entities.NewError(http.StatusInternalServerError, "internal error"))
 		return
 	}
-
+	log.Debug("Successful changing products")
 	ctx.JSON(200, entities.ApiReply{
 		Error:   nil,
 		Message: "OK",
@@ -86,6 +89,7 @@ func ChangeProductHandler(ctx *gin.Context, svc services.GateService) {
 // @Schemes
 // @Description Deletes product
 // @Tags Product
+// @Param Authorization header string true "Used to pass access token"
 // @Param request body api.DeleteProductRequest true "Delete product request"
 // @Accept json
 // @Produce json
@@ -98,10 +102,11 @@ func DeleteProductHandler(ctx *gin.Context, svc services.GateService) {
 	err := bindAndValidateJSON(&request, ctx)
 	err = svc.DeleteProduct(DTO.ProductDTO{ID: request.ProductID})
 	if err != nil {
+		log.Error("internal error: ", err.Error())
 		ctx.Error(entities.NewError(http.StatusInternalServerError, "internal error"))
 		return
 	}
-
+	log.Debug("Successful deleteng product")
 	ctx.JSON(200, entities.ApiReply{
 		Error:   nil,
 		Message: "OK",
@@ -112,6 +117,7 @@ func DeleteProductHandler(ctx *gin.Context, svc services.GateService) {
 // @Summary Order products
 // @Schemes
 // @Description Order products
+// @Param Authorization header string true "Used to pass access token"
 // @Param request body api.OrderProductRequest true "Order product request"
 // @Tags Product
 // @Produce json
@@ -123,10 +129,11 @@ func OrderProductHandler(ctx *gin.Context, svc services.GateService) {
 	err := bindAndValidateJSON(&request, ctx)
 	err = svc.OrderProduct(DTO.ProductDTO{ID: request.ProductID})
 	if err != nil {
+		log.Error("Internal error: ", err.Error())
 		ctx.Error(entities.NewError(http.StatusInternalServerError, "internal error"))
 		return
 	}
-
+	log.Debug("Successful ordered product")
 	ctx.JSON(200, entities.ApiReply{
 		Error:   nil,
 		Message: "OK",
@@ -137,6 +144,7 @@ func OrderProductHandler(ctx *gin.Context, svc services.GateService) {
 // @Summary Rates some product
 // @Schemes
 // @Description Rates some product
+// @Param Authorization header string true "Used to pass access token"
 // @Param request body api.RateProductRequest true "Order product request"
 // @Tags Product
 // @Produce json
@@ -148,10 +156,11 @@ func RateProductHandler(ctx *gin.Context, svc services.GateService) {
 	err := bindAndValidateJSON(&request, ctx)
 	err = svc.RateProduct(DTO.ProductDTO{ID: request.ProductID, Ratting: request.NewRatting})
 	if err != nil {
+		log.Error("internal error: ", err.Error())
+		log.Error("internal error: ", err.Error())
 		ctx.Error(entities.NewError(http.StatusInternalServerError, "internal error"))
 		return
 	}
-
 	ctx.JSON(200, entities.ApiReply{
 		Error:   nil,
 		Message: "OK",
@@ -159,34 +168,37 @@ func RateProductHandler(ctx *gin.Context, svc services.GateService) {
 }
 
 // GetSeveralProducts godoc
-// @Summary GetSeveralProducts
+// @Summary Get Several Products
 // @Schemes
-// @Description GetSeveralProducts
-// @Param request body api.GetSeveralProducts true "Get several products request"
+// @Description Get Several Products
+// @Param Authorization header string true "Used to pass access token"
+// @Param request body api.GetAllProductsRequest true "Get some products"
 // @Tags Product
 // @Produce json
 // @Success 200 {object} entities.ApiReply
 // @Failure 500 {object} entities.ApiReply{error=entities.Error}
-// @Router /catalog/v1/{id}/rate [get]
+// @Router /catalog/v1/products [get]
 func GetSeveralProductsHandler(ctx *gin.Context, svc services.GateService) {
-	var request api.GetAllProductsRequest //TODO это не сработает еблан
+	var request api.GetAllProductsRequest
 	v := validator.New()
-	if err := ctx.ShouldBindUri(&request); err != nil { //TODO gin.BindSkip
+	if err := ctx.ShouldBindUri(&request); err != nil {
 		log.Info("Can't load body: ", err.Error())
 		err = ctx.Error(entities.NewError(http.StatusBadRequest, fmt.Sprintf("invalid body: %s", err.Error())))
 		return
 	}
 
 	if err := v.Struct(request); err != nil {
+		log.Error("Internal handler error: ", err.Error())
 		err = ctx.Error(entities.NewError(http.StatusBadRequest, fmt.Sprintf("invalid body: %s", err.Error())))
 		return
 	}
 	products, err := svc.GetSeveralProducts(request.SelectionDTO)
 	if err != nil {
+		log.Error("Internal handler error: ", err.Error())
 		ctx.Error(entities.NewError(http.StatusInternalServerError, "internal error"))
 		return
 	}
-
+	log.Debug("Successful getting several products")
 	ctx.JSON(200, entities.ApiReply{
 		Data:    products,
 		Error:   nil,

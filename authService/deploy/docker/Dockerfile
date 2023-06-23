@@ -8,7 +8,7 @@ COPY ./authService/go.mod .
 COPY ./authService/docs/ /build/docs/
 COPY ./authService/cmd/ /build/cmd/
 
-RUN make download prebuild build-linux
+RUN make download prebuild doc build-linux
 
 FROM alpine:3.17
 
@@ -20,4 +20,4 @@ COPY --from=build /build/dist/linux/goauth .
 
 COPY authService/config/config.yaml /config.yaml
 
-CMD ["/authsvc", "start"]
+CMD ["/goauth", "start"]

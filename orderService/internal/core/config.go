@@ -28,12 +28,16 @@ type RabbitConfig struct {
 }
 
 type PostgresConfig struct {
-	Initialize string
+	Host     string `config:"host" validate:"required" yaml:"host"`
+	Port     string `config:"port" validate:"required" yaml:"port"`
+	Password string `config:"password" validate:"omitempty,default=''" yaml:"password"`
+	User     string `config:"user" validate:"required" yaml:"user"`
+	Dbname   string `config:"dbname" validate:"required" yaml:"dbname"`
 }
 
 type IntegrationsConfig struct {
 	Rabbit   RabbitConfig   `config:"rabbitmq" validate:"required" yaml:"rabbitmq"`
-	Postgres PostgresConfig `config:"redis" validate:"required" yaml:"redis"`
+	Postgres PostgresConfig `config:"postgres" validate:"required" yaml:"postgres"`
 }
 
 type Config struct {

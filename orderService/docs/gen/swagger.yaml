@@ -43,47 +43,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /api/v1/orders:
-    post:
-      consumes:
-      - application/json
-      description: Creates new order
-      parameters:
-      - description: Create order request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/api.CreateOrderRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Response'
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/Response'
-            - properties:
-                error:
-                  $ref: '#/definitions/entities.Error'
-              type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            allOf:
-            - $ref: '#/definitions/Response'
-            - properties:
-                error:
-                  $ref: '#/definitions/entities.Error'
-              type: object
-      summary: Creates new order
-      tags:
-      - Order
-  /internal/orders/setStatus/{id}:
+  /order/v1/internal/orders/setStatus/{id}:
     post:
       description: Set order status
       parameters:
@@ -120,7 +80,7 @@ paths:
       summary: Set order status
       tags:
       - Order
-  /orders:
+  /order/v1/orders:
     get:
       description: GetUserOrders
       produces:
@@ -142,29 +102,8 @@ paths:
       summary: GetUserOrders
       tags:
       - Order
-  /orders/{id}:
-    get:
-      description: get order info
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            allOf:
-            - $ref: '#/definitions/Response'
-            - properties:
-                error:
-                  $ref: '#/definitions/entities.Error'
-              type: object
-      summary: get order info
-      tags:
-      - Order
-    post:
+  /order/v1/orders/{id}:
+    delete:
       consumes:
       - application/json
       description: Deletes order
@@ -203,4 +142,25 @@ paths:
       summary: Deletes order
       tags:
       - Product
+    get:
+      description: get order info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: get order info
+      tags:
+      - Order
 swagger: "2.0"

@@ -10,7 +10,7 @@ import (
 )
 
 func NewPostgresOrderClient(cfg *core.PostgresConfig) (services.OrderService, error) {
-	internalDB, err := gorm.Open(postgres.Open(cfg.Initialize), &gorm.Config{})
+	internalDB, err := gorm.Open(postgres.Open("user="+cfg.User+" password="+cfg.Password+" dbname="+cfg.Dbname+" sslmode=disable "+"host="+cfg.Host+" port="+cfg.Port), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -26,7 +26,7 @@ func NewPostgresOrderClient(cfg *core.PostgresConfig) (services.OrderService, er
 }
 
 func FOR_TESTING_NewPostgresOrderClient(cfg *core.PostgresConfig) (*PostgresOrderService, error) {
-	internalDB, err := gorm.Open(postgres.Open(cfg.Initialize), &gorm.Config{})
+	internalDB, err := gorm.Open(postgres.Open("" /*TODO мне лень делать сецчас это блин*/), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

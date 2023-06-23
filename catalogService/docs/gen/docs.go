@@ -16,7 +16,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/products": {
+        "/catalog/v1/products": {
+            "get": {
+                "description": "Get Several Products",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get Several Products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "$ref": "#/definitions/entities.Error"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates new product",
                 "consumes": [
@@ -86,8 +122,80 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/products/{id}": {
+        "/catalog/v1/products/{id}": {
             "post": {
+                "description": "Change product information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Change product information",
+                "parameters": [
+                    {
+                        "description": "Create product request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.ChangeProductRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "label",
+                        "name": "label",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "$ref": "#/definitions/entities.Error"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "$ref": "#/definitions/entities.Error"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
                 "description": "Deletes product",
                 "consumes": [
                     "application/json"
@@ -101,12 +209,12 @@ const docTemplate = `{
                 "summary": "Deletes product",
                 "parameters": [
                     {
-                        "description": "Create product request",
+                        "description": "Delete product request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.CreateProductRequest"
+                            "$ref": "#/definitions/api.DeleteProductRequest"
                         }
                     }
                 ],
@@ -156,7 +264,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/products/{id}/order": {
+        "/catalog/v1/products/{id}/order": {
             "post": {
                 "description": "Order products",
                 "produces": [
@@ -166,6 +274,17 @@ const docTemplate = `{
                     "Product"
                 ],
                 "summary": "Order products",
+                "parameters": [
+                    {
+                        "description": "Order product request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.OrderProductRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -194,16 +313,27 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/{id}/rate": {
-            "get": {
-                "description": "GetSeveralProducts",
+        "/catalog/v1/{id}/rate": {
+            "post": {
+                "description": "Rates some product",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Product"
                 ],
-                "summary": "GetSeveralProducts",
+                "summary": "Rates some product",
+                "parameters": [
+                    {
+                        "description": "Order product request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.RateProductRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -280,11 +410,46 @@ const docTemplate = `{
                 }
             }
         },
+        "api.ChangeProductRequest": {
+            "type": "object",
+            "properties": {
+                "productDTO": {
+                    "$ref": "#/definitions/DTO.ProductDTO"
+                }
+            }
+        },
         "api.CreateProductRequest": {
             "type": "object",
             "properties": {
                 "productDTO": {
                     "$ref": "#/definitions/DTO.ProductDTO"
+                }
+            }
+        },
+        "api.DeleteProductRequest": {
+            "type": "object",
+            "properties": {
+                "productID": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.OrderProductRequest": {
+            "type": "object",
+            "properties": {
+                "productID": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.RateProductRequest": {
+            "type": "object",
+            "properties": {
+                "newRatting": {
+                    "type": "number"
+                },
+                "productID": {
+                    "type": "string"
                 }
             }
         },

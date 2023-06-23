@@ -60,7 +60,8 @@ func CreateOrderHandler(ctx *gin.Context, svc services.GateService) {
 // @Schemes
 // @Description Set order status
 // @Tags Order
-// @Param label path string true "label"
+// @Param Authorization header string true "Used to pass access token"
+// @Param request body api.SetOrderStatusRequest true "Delete order request"
 // @Produce json
 // @Success 200 {object} entities.ApiReply
 // @Failure 400 {object} entities.ApiReply{error=entities.Error}
@@ -86,7 +87,8 @@ func SetOrderStatusHandler(ctx *gin.Context, svc services.GateService) {
 // @Schemes
 // @Description Deletes order
 // @Tags Product
-// @Param request body api.CreateOrderRequest true "Create order request"
+// @Param Authorization header string true "Used to pass access token"
+// @Param request body api.DeleteOrderRequest true "Delete order request"
 // @Accept json
 // @Produce json
 // @Success 200 {object} entities.ApiReply
@@ -112,6 +114,8 @@ func DeleteOrderHandler(ctx *gin.Context, svc services.GateService) {
 // @Summary get order info
 // @Schemes
 // @Description get order info
+// @Param Authorization header string true "Used to pass access token"
+// @Param request body api.GetOrderInfoRequest true "Get order info"
 // @Tags Order
 // @Produce json
 // @Success 200 {object} entities.ApiReply
@@ -147,6 +151,8 @@ func GetOrderInfoHandler(ctx *gin.Context, svc services.GateService) {
 // @Summary GetUserOrders
 // @Schemes
 // @Description GetUserOrders
+// @Param Authorization header string true "Used to pass access token"
+// @Param request body api.GetUserOrdersRequest true "Get user orders"
 // @Tags Order
 // @Produce json
 // @Success 200 {object} entities.ApiReply

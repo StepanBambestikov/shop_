@@ -5,6 +5,7 @@ import (
 	"catalogServiceGit/internal/core/selection"
 	"catalogServiceGit/internal/core/services"
 	"catalogServiceGit/internal/core/services/DTO"
+	"catalogServiceGit/internal/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -14,13 +15,14 @@ import (
 //)
 
 func NewPostgresCatalogClient(cfg *core.PostgresConfig) (services.CatalogService, error) {
-	internalDB, err := gorm.Open(postgres.Open("user="+cfg.User+" password="+cfg.Password+" dbname="+cfg.DBName+" sslmode=disable"), &gorm.Config{})
+	internalDB, err := gorm.Open(postgres.Open("user="+cfg.User+" password="+cfg.Password+" dbname="+cfg.Dbname+" sslmode=disable "+"host="+cfg.Host+" port="+cfg.Port), &gorm.Config{})
 	if err != nil {
+		log.Error("cannot open database>, pizda")
 		panic(err)
 	}
 	dbManager := &PostgresCatalogService{innerDB: internalDB}
-	addCryptoExtention(dbManager)
-	err = dbManager.DeleteAllTables()
+	//addCryptoExtention(dbManager)
+	//err = dbManager.DeleteAllTables()
 	if err != nil {
 		panic(err)
 	}

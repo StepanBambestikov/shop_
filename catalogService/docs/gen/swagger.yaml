@@ -29,10 +29,32 @@ definitions:
       message:
         type: string
     type: object
+  api.ChangeProductRequest:
+    properties:
+      productDTO:
+        $ref: '#/definitions/DTO.ProductDTO'
+    type: object
   api.CreateProductRequest:
     properties:
       productDTO:
         $ref: '#/definitions/DTO.ProductDTO'
+    type: object
+  api.DeleteProductRequest:
+    properties:
+      productID:
+        type: string
+    type: object
+  api.OrderProductRequest:
+    properties:
+      productID:
+        type: string
+    type: object
+  api.RateProductRequest:
+    properties:
+      newRatting:
+        type: number
+      productID:
+        type: string
     type: object
   entities.Error:
     properties:
@@ -43,9 +65,16 @@ definitions:
 info:
   contact: {}
 paths:
-  /api/v1/{id}/rate:
-    get:
-      description: GetSeveralProducts
+  /catalog/v1/{id}/rate:
+    post:
+      description: Rates some product
+      parameters:
+      - description: Order product request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.RateProductRequest'
       produces:
       - application/json
       responses:
@@ -62,10 +91,31 @@ paths:
                 error:
                   $ref: '#/definitions/entities.Error'
               type: object
-      summary: GetSeveralProducts
+      summary: Rates some product
       tags:
       - Product
-  /api/v1/products:
+  /catalog/v1/products:
+    get:
+      description: Get Several Products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Get Several Products
+      tags:
+      - Product
     post:
       consumes:
       - application/json
@@ -105,18 +155,18 @@ paths:
       summary: Creates new product
       tags:
       - Product
-  /api/v1/products/{id}:
-    post:
+  /catalog/v1/products/{id}:
+    delete:
       consumes:
       - application/json
       description: Deletes product
       parameters:
-      - description: Create product request
+      - description: Delete product request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/api.CreateProductRequest'
+          $ref: '#/definitions/api.DeleteProductRequest'
       produces:
       - application/json
       responses:
@@ -145,9 +195,58 @@ paths:
       summary: Deletes product
       tags:
       - Product
-  /api/v1/products/{id}/order:
+    post:
+      description: Change product information
+      parameters:
+      - description: Create product request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.ChangeProductRequest'
+      - description: label
+        in: path
+        name: label
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/Response'
+            - properties:
+                error:
+                  $ref: '#/definitions/entities.Error'
+              type: object
+      summary: Change product information
+      tags:
+      - Product
+  /catalog/v1/products/{id}/order:
     post:
       description: Order products
+      parameters:
+      - description: Order product request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.OrderProductRequest'
       produces:
       - application/json
       responses:

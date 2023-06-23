@@ -8,6 +8,7 @@ import (
 	"catalogServiceGit/internal/core/services/impl/coresvc"
 	"catalogServiceGit/internal/util"
 	"context"
+	"fmt"
 	"log"
 
 	"golang.org/x/sync/errgroup"
@@ -63,6 +64,9 @@ func NewCoreApp(config *core.Config) (baseapp.IApp, error) {
 	if err != nil {
 		log.Fatal("Cannot initialize web app: ", err)
 	}
+	fmt.Println("=====================================================================")
+	fmt.Println(config.Integrations.Postgres)
+	fmt.Println("=====================================================================")
 	catalogservice, err := catalogService.NewPostgresCatalogClient(&config.Integrations.Postgres)
 	if err != nil {
 		log.Fatal("Cannot initialize counter service: ", err)

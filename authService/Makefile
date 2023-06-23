@@ -51,4 +51,4 @@ download:
 build-all: build-mac build-linux
 all: doc test prebuild-all build-all
 run:
-	./dist/drawin/authsvc start
+	./dist/drawin/goauth start

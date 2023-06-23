@@ -9,7 +9,7 @@ COPY ./orderService/docs/ /build/docs/
 COPY ./orderService/cmd/ /build/cmd/
 
 
-RUN make download prebuild build-linux
+RUN go mod tidy -go=1.16 && go mod tidy -go=1.20 && go mod download && make prebuild doc build-linux
 
 FROM alpine:3.17
 
